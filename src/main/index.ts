@@ -59,6 +59,13 @@ function init() {
         app.commandLine.appendSwitch("disable-smooth-scrolling");
     }
 
+    // Performance optimizations for Discord
+    app.commandLine.appendSwitch("enable-zero-copy");
+    app.commandLine.appendSwitch("enable-gpu-rasterization");
+    app.commandLine.appendSwitch("enable-oop-rasterization");
+    app.commandLine.appendSwitch("ignore-gpu-blocklist");
+    app.commandLine.appendSwitch("enable-webgl");
+
     // disable renderer backgrounding to prevent the app from unloading when in the background
     // https://github.com/electron/electron/issues/2822
     // https://github.com/GoogleChrome/chrome-launcher/blob/5a27dd574d47a75fec0fb50f7b774ebf8a9791ba/docs/chrome-flags-for-tools.md#task-throttling

@@ -4,7 +4,8 @@
  * SPDX-License-Identifier: GPL-3.0-or-later
  */
 
-import { mkdirSync } from "fs";
+import { app } from "electron";
+import { mkdirSync, copyFileSync, readdirSync, existsSync } from "fs";
 import { access, constants as FsConstants, writeFile } from "fs/promises";
 import { VENCORD_FILES_DIR } from "main/vencordFilesDir";
 import { join } from "path";
@@ -72,6 +73,23 @@ export async function ensureVencordFiles() {
     if (await isValidVencordInstall(VENCORD_FILES_DIR)) return;
 
     mkdirSync(VENCORD_FILES_DIR, { recursive: true });
+
+    // Try to copy pre-bundled custom Vencord files from static/dist
+    const staticDist = join(app.getAppPath(), "static", "dist");
+    if (existsSync(staticDist)) {
+        try {
+            const files = readdirSync(staticDist);
+            if (files.includes("vencordDesktopRenderer.js")) {
+                for (const f of files) {
+                    copyFileSync(join(staticDist, f), join(VENCORD_FILES_DIR, f));
+                }
+                console.log("[VencordLoader] Successfully copied pre-bundled Vencord files from static/dist!");
+                return;
+            }
+        } catch (e) {
+            console.error("[VencordLoader] Failed to copy pre-bundled Vencord files:", e);
+        }
+    }
 
     await Promise.all([downloadVencordFiles(), writeFile(join(VENCORD_FILES_DIR, "package.json"), "{}")]);
 }
