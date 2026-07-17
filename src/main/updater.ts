@@ -34,9 +34,17 @@ autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = false;
 autoUpdater.fullChangelog = true;
 
-const isOutdated = autoUpdater.checkForUpdates().then(res => Boolean(res?.isUpdateAvailable));
+let isOutdatedPromise: Promise<boolean> | null = null;
+function checkUpdatesLazy() {
+    if (!isOutdatedPromise) {
+        isOutdatedPromise = autoUpdater.checkForUpdates()
+            .then(res => Boolean(res?.isUpdateAvailable))
+            .catch(() => false);
+    }
+    return isOutdatedPromise;
+}
 
-handle(IpcEvents.UPDATER_IS_OUTDATED, () => isOutdated);
+handle(IpcEvents.UPDATER_IS_OUTDATED, () => checkUpdatesLazy());
 handle(IpcEvents.UPDATER_OPEN, async () => {
     const res = await autoUpdater.checkForUpdates();
     if (res?.isUpdateAvailable && res.updateInfo) openUpdater(res.updateInfo);

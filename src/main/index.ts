@@ -40,6 +40,10 @@ function init() {
     app.commandLine.removeSwitch("enable-features");
     app.commandLine.removeSwitch("disable-features");
 
+    // Lazy load off-screen frames and images to speed up initial render
+    enabledFeatures.add("BlinkLazyFrameLoading");
+    enabledFeatures.add("BlinkLazyImageLoading");
+
     if (hardwareAcceleration === false || process.argv.includes("--disable-gpu")) {
         enableHardwareAcceleration = false;
         app.disableHardwareAcceleration();
@@ -65,6 +69,8 @@ function init() {
     app.commandLine.appendSwitch("enable-oop-rasterization");
     app.commandLine.appendSwitch("ignore-gpu-blocklist");
     app.commandLine.appendSwitch("enable-webgl");
+    app.commandLine.appendSwitch("enable-simple-cache-backend");
+    app.commandLine.appendSwitch("v8-cache-options", "code");
 
     // disable renderer backgrounding to prevent the app from unloading when in the background
     // https://github.com/electron/electron/issues/2822
