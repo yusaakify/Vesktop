@@ -10,6 +10,7 @@
     "main": "dist/js/main.js",
     "scripts": {
         "build": "tsx scripts/build/build.mts",
+        "build:vencord": "node scripts/build-custom-vencord.js",
         "build:dev": "pnpm build --dev",
         "buildLibVesktop": "pnpm -C packages/libvesktop install && pnpm -C packages/libvesktop run build",
         "package": "pnpm build && electron-builder",
